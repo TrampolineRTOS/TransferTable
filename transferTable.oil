@@ -18,10 +18,13 @@ CPU blink {
     STATUS = EXTENDED;
     
     BUILD = TRUE {
-      TRAMPOLINE_BASE_PATH = "../../../../../..";
+      TRAMPOLINE_BASE_PATH = "/Users/jlb/Develop/trampoline-master";
       APP_SRC = "transferTable.c";
       APP_SRC = "endStopSubsystem.c";
       APP_SRC = "displaySubsystem.c";
+      APP_SRC = "motorSubsystem.c";
+      APP_SRC = "controller.c";
+      APP_SRC = "button.c";
       APP_NAME = "transferTable_exe";
       CFLAGS  = "-O3"; 
       LDFLAGS = "-Map=blink.map";
@@ -71,6 +74,9 @@ CPU blink {
     };
   };
   
+  /*
+   * display subsystem
+   */
   TASK display {
     PRIORITY = 1;
     AUTOSTART = FALSE;
@@ -90,5 +96,44 @@ CPU blink {
     };
   };
   
+  /*
+   * motor subsystem
+   */
+  TASK motorTask {
+    PRIORITY = 6;
+    AUTOSTART = FALSE;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+  };
+  
+  ALARM motorRun {
+    COUNTER = SystemCounter;
+    ACTION = ACTIVATETASK {
+      TASK = motorTask;
+    };
+    AUTOSTART = FALSE;
+  };
+  
+  /*
+   * Controller
+   */
+  TASK controllerTask {
+    PRIORITY = 3;
+    AUTOSTART = FALSE;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+  };
+
+  ALARM controllerRun {
+    COUNTER = SystemCounter;
+    ACTION = ACTIVATETASK {
+      TASK = controllerTask;
+    };
+    AUTOSTART = TRUE {
+      APPMODE = std;
+      ALARMTIME = 1;
+      CYCLETIME = 10;
+    };
+  };
 };
 
